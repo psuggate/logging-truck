@@ -1,0 +1,88 @@
+name:                logging-truck
+version:             0.1.0.3
+github:              "githubabuser/logging-truck"
+license:             BSD3
+author:              "Patrick Suggate"
+maintainer:          "patrick.suggate@gmail.com"
+copyright:           "2022 Patrick Suggate"
+
+extra-source-files:
+- README.md
+synopsis:            Logging generators and transporters
+category:            System
+description:         Please see the README on GitHub at <https://github.com/githubabuser/logging-truck#readme>
+
+ghc-options:
+- -Wall
+
+default-extensions:
+- DataKinds
+- DeriveGeneric
+- FlexibleInstances
+- GeneralisedNewtypeDeriving
+- InstanceSigs
+- NoImplicitPrelude
+- ScopedTypeVariables
+- StandaloneDeriving
+- TupleSections
+- TypeApplications
+- TypeFamilies
+
+dependencies:
+- aeson
+- base >= 4.7 && < 5
+- bytestring
+- co-log-core
+- containers
+- dhall
+- double-conversion
+- lens
+- fast-logger
+- gogol
+- gogol-core
+- gogol-pubsub
+- relude
+- resourcet
+- text
+- time
+- transformers
+- unix-time
+- unliftio-core
+- uuid
+
+library:
+  source-dirs: src
+
+executables:
+  logging-truck-exe:
+    main:                Main.hs
+    source-dirs:         app
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - logging-truck
+
+tests:
+  logging-truck-test:
+    main:                Spec.hs
+    source-dirs:         test
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - logging-truck
+
+benchmarks:
+  rubs-bench:
+    main:               Bench.hs
+    source-dirs:        bench
+    ghc-options:
+    - -Wall
+    dependencies:
+    - base >= 4.7 && < 5
+    - criterion
+    - deepseq
+    - logging-truck

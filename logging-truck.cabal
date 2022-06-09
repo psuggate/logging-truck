@@ -30,6 +30,7 @@ library
       Data.Event.Status
       Data.Google.Logger
       Data.Google.Types
+      Network.Google.BigQuery
       Network.Google.PubSub
       System.Logger
       System.Logger.Class
@@ -63,6 +64,7 @@ library
     , double-conversion
     , fast-logger
     , gogol
+    , gogol-bigquery
     , gogol-core
     , gogol-pubsub
     , lens
@@ -105,6 +107,7 @@ executable logging-truck-exe
     , double-conversion
     , fast-logger
     , gogol
+    , gogol-bigquery
     , gogol-core
     , gogol-pubsub
     , lens
@@ -149,6 +152,7 @@ test-suite logging-truck-test
     , double-conversion
     , fast-logger
     , gogol
+    , gogol-bigquery
     , gogol-core
     , gogol-pubsub
     , lens
@@ -195,6 +199,7 @@ benchmark rubs-bench
     , double-conversion
     , fast-logger
     , gogol
+    , gogol-bigquery
     , gogol-core
     , gogol-pubsub
     , lens

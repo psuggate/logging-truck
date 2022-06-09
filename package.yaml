@@ -39,6 +39,7 @@ dependencies:
 - lens
 - fast-logger
 - gogol
+- gogol-bigquery
 - gogol-core
 - gogol-pubsub
 - relude

@@ -33,6 +33,7 @@ library
       Network.Google.PubSub
       System.Logger
       System.Logger.Class
+      System.Logger.JSON
       System.Logger.Message
       System.Logger.Settings
   other-modules:

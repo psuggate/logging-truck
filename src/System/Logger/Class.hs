@@ -8,7 +8,9 @@
 -- | The 'MonadLogger' type-class and associated functions.
 module System.Logger.Class
   (
-    L.Settings
+    module Export
+
+  , L.Settings
   , L.Renderer
   , L.defaultSettings
   , L.logLevel
@@ -43,8 +45,6 @@ module System.Logger.Class
   , warn
   , err
   , fatal
-
-  , module Export
   )
 where
 

@@ -13,6 +13,7 @@ resolver:
 packages:
 - .
 - lib/gogol
+- lib/gogol-bigquery
 - lib/gogol-core
 - lib/gogol-pubsub
 

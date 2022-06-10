@@ -1,4 +1,4 @@
-{-# LANGUAGE DeriveAnyClass, DeriveGeneric, DerivingStrategies,
+{-# LANGUAGE DeriveAnyClass, DeriveGeneric, DerivingStrategies, DerivingVia,
              OverloadedStrings, TemplateHaskell #-}
 
 -- This Source Code Form is subject to the terms of the Mozilla Public
@@ -96,13 +96,13 @@ data Severity
   | Error
   | Fatal
   deriving (Enum, Eq, Generic, Ord, Read, Show)
-  deriving anyclass (FromJSON, ToJSON)
+  deriving anyclass (FromJSON, NFData, ToJSON)
 
 data Output
   = StdOut
   | StdErr
   | Path FilePath
-  deriving (Eq, Generic, Ord, Show)
+  deriving (Eq, Generic, NFData, Ord, Show)
 
 ------------------------------------------------------------------------------
 newtype DateFormat

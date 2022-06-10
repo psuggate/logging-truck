@@ -58,8 +58,8 @@ class HasProject t a | t -> a where
 ------------------------------------------------------------------------------
 newtype Project
   = Project { getProject :: Text }
-  deriving (Eq, Generic, NFData, Show)
-  deriving newtype (FromDhall, FromJSON, ToJSON)
+  deriving (Eq, Generic, Show)
+  deriving newtype (FromDhall, FromJSON, NFData, ToJSON)
 
 instance IsString Project where
   fromString  = Project . toText

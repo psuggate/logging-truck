@@ -67,6 +67,7 @@ library
     , gogol-bigquery
     , gogol-core
     , gogol-pubsub
+    , http-api-data
     , lens
     , relude
     , resourcet
@@ -110,6 +111,7 @@ executable logging-truck-exe
     , gogol-bigquery
     , gogol-core
     , gogol-pubsub
+    , http-api-data
     , lens
     , logging-truck
     , relude
@@ -155,6 +157,8 @@ test-suite logging-truck-test
     , gogol-bigquery
     , gogol-core
     , gogol-pubsub
+    , hspec
+    , http-api-data
     , lens
     , logging-truck
     , relude
@@ -202,6 +206,7 @@ benchmark rubs-bench
     , gogol-bigquery
     , gogol-core
     , gogol-pubsub
+    , http-api-data
     , lens
     , logging-truck
     , relude

@@ -1,5 +1,5 @@
-{-# LANGUAGE DerivingStrategies, FunctionalDependencies, MultiParamTypeClasses,
-             OverloadedStrings #-}
+{-# LANGUAGE DeriveAnyClass, DerivingStrategies, FunctionalDependencies,
+             MultiParamTypeClasses, OverloadedStrings #-}
 
 ------------------------------------------------------------------------------
 -- |
@@ -70,6 +70,7 @@ import qualified Data.UUID.V4            as UUID
 import           Relude
 import           System.Logger           as Logger
 import           System.Logger.Class     as Class (MonadLogger (..))
+import           Web.HttpApiData         (FromHttpApiData)
 
 
 -- * Convenience function-families
@@ -95,6 +96,7 @@ data StatusEvent
       , statusEvent'message  :: !(Maybe Text)
       }
   deriving (Eq, Generic, Show)
+  deriving anyclass (NFData)
 
 instance ToJSON StatusEvent where
   toJSON = genericToJSON jsonOpts
@@ -120,17 +122,17 @@ instance ToText StatusEvent where
 newtype MessageId
   = MessageId { getMessageId :: UUID }
   deriving (Eq, Generic, Show)
-  deriving newtype (FromJSON, ToJSON)
+  deriving newtype (FromHttpApiData, FromJSON, NFData, ToJSON)
 
 newtype ServiceName
   = ServiceName { getServiceName :: Text }
   deriving (Eq, Generic, Show)
-  deriving newtype (FromJSON, ToJSON)
+  deriving newtype (FromHttpApiData, FromJSON, NFData, ToJSON)
 
 newtype Platform
   = Platform { getPlatform :: Text }
   deriving (Eq, Generic, Show)
-  deriving newtype (FromJSON, ToJSON)
+  deriving newtype (FromHttpApiData, FromJSON, NFData, ToJSON)
 
 
 -- * Data types for status-events
@@ -142,6 +144,7 @@ data StatusMessage
       , _details :: !Text
       }
   deriving (Eq, Generic, Show)
+  deriving anyclass (NFData)
 
 instance IsString StatusMessage where
   fromString = StatusMessage Debug unknown . toText
@@ -159,7 +162,7 @@ instance HasSeverity StatusMessage where
 newtype EventStatus
   = EventStatus { getEventStatus :: Text }
   deriving (Eq, Generic, Show)
-  deriving newtype (FromJSON, ToJSON)
+  deriving newtype (FromHttpApiData, FromJSON, NFData, ToJSON)
 
 instance IsString EventStatus where
   fromString = EventStatus . toText

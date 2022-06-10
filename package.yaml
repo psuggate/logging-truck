@@ -36,6 +36,7 @@ dependencies:
 - containers
 - dhall
 - double-conversion
+- http-api-data
 - lens
 - fast-logger
 - gogol
@@ -74,6 +75,7 @@ tests:
     - -rtsopts
     - -with-rtsopts=-N
     dependencies:
+    - hspec
     - logging-truck
 
 benchmarks:

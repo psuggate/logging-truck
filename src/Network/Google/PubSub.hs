@@ -1,6 +1,7 @@
 {-# LANGUAGE ConstraintKinds, DataKinds, DerivingStrategies, FlexibleContexts,
-             FunctionalDependencies, MultiParamTypeClasses, OverloadedStrings,
-             PatternSynonyms, ScopedTypeVariables, TypeFamilies #-}
+             FunctionalDependencies, MultiParamTypeClasses, NoImplicitPrelude,
+             OverloadedStrings, PatternSynonyms, ScopedTypeVariables,
+             TypeFamilies #-}
 
 ------------------------------------------------------------------------------
 -- |
@@ -35,7 +36,6 @@ import           Control.Monad.Google as Export
 import           Data.Aeson           as Aeson
 import           Data.Event.Status    as Export (HasDetailsOf (..))
 import           Data.Google.Types    as Export
-import           Dhall                (FromDhall)
 import qualified Gogol                as Google
 import qualified Gogol.Auth.Scope     as Google
 import qualified Gogol.PubSub         as PubSub
@@ -69,7 +69,7 @@ instance HasDetailsOf PubSub.PubsubMessage (Maybe ByteString) where
 newtype TopicName
   = TopicName { getTopicName :: Text }
   deriving (Eq, Generic, NFData, Show)
-  deriving newtype (FromDhall, FromJSON, ToJSON)
+  deriving newtype (FromJSON, ToJSON)
 
 instance IsString TopicName where
   fromString = TopicName . toText

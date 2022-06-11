@@ -1,5 +1,5 @@
 {-# LANGUAGE DeriveAnyClass, DerivingStrategies, FunctionalDependencies,
-             MultiParamTypeClasses, OverloadedStrings #-}
+             MultiParamTypeClasses, NoImplicitPrelude, OverloadedStrings #-}
 
 ------------------------------------------------------------------------------
 -- |
@@ -54,6 +54,9 @@ module Data.Event.Status
   , stdoutLogger
   , stderrLogger
   , actionLogger
+
+  , exampleStatusEvent
+  , unsafeReadUUID
   )
 where
 
@@ -65,11 +68,13 @@ import           Data.Aeson              (FromJSON (..), Options (..),
                                           genericParseJSON, genericToJSON)
 import qualified Data.List               as List
 import           Data.Time.Clock         as Time (UTCTime, getCurrentTime)
-import           Data.UUID               (UUID)
+import           Data.UUID               as UUID (UUID)
+import qualified Data.UUID               as UUID (fromString)
 import qualified Data.UUID.V4            as UUID
 import           Relude
 import           System.Logger           as Logger
 import           System.Logger.Class     as Class (MonadLogger (..))
+import qualified Text.Read               as Text (read)
 import           Web.HttpApiData         (FromHttpApiData)
 
 
@@ -124,15 +129,26 @@ newtype MessageId
   deriving (Eq, Generic, Show)
   deriving newtype (FromHttpApiData, FromJSON, NFData, ToJSON)
 
+instance IsString MessageId where
+  fromString = MessageId . unsafeReadUUID "MessageId"
+
+------------------------------------------------------------------------------
 newtype ServiceName
   = ServiceName { getServiceName :: Text }
   deriving (Eq, Generic, Show)
   deriving newtype (FromHttpApiData, FromJSON, NFData, ToJSON)
 
+instance IsString ServiceName where
+  fromString = ServiceName . toText
+
+------------------------------------------------------------------------------
 newtype Platform
   = Platform { getPlatform :: Text }
   deriving (Eq, Generic, Show)
   deriving newtype (FromHttpApiData, FromJSON, NFData, ToJSON)
+
+instance IsString Platform where
+  fromString = Platform . toText
 
 
 -- * Data types for status-events
@@ -261,9 +277,33 @@ jsonOpts  = defaultOptions
   }
 
 ------------------------------------------------------------------------------
+-- | Helper-function for reading a UUID into a @newtype@.
+--
+--   NOTE: only a partial function, and is intended only for testing and
+--     generating documentation.
+--
+unsafeReadUUID :: Text -> String -> UUID.UUID
+unsafeReadUUID typ sval = error emsg `fromMaybe` UUID.fromString sval where
+  emsg = "Failed to parse value (" <> fromString sval <> " :: " <> typ <> ")"
+
+------------------------------------------------------------------------------
 logEvent :: MonadLogger m => StatusMessage -> m ()
 logEvent ev = Class.log (ev ^. severity) (eventMsg ev)
 
 ------------------------------------------------------------------------------
 eventMsg :: StatusMessage -> Msg -> Msg
 eventMsg (StatusMessage _ s d) = field "status" s . msg d
+
+
+-- * Miscellaneous functions
+------------------------------------------------------------------------------
+exampleStatusEvent :: StatusEvent
+exampleStatusEvent  = StatusEvent
+  { statusEvent'id       = "b0614aaa-2daf-40a3-8fe5-5772bad038aa"
+  , statusEvent'datetime = Text.read "2022-03-01 07:37:47 UTC"
+  , statusEvent'platform = testing
+  , statusEvent'service  = ServiceName "logging-truck (version: 0.1.0.3)"
+  , statusEvent'severity = Fatal
+  , statusEvent'status   = Just resolved
+  , statusEvent'message  = Just "have a great weekend!"
+  }

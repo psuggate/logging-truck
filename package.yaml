@@ -21,12 +21,10 @@ default-extensions:
 - FlexibleInstances
 - GeneralisedNewtypeDeriving
 - InstanceSigs
-- NoImplicitPrelude
 - ScopedTypeVariables
 - StandaloneDeriving
 - TupleSections
 - TypeApplications
-- TypeFamilies
 
 dependencies:
 - aeson
@@ -34,7 +32,6 @@ dependencies:
 - bytestring
 - co-log-core
 - containers
-- dhall
 - double-conversion
 - http-api-data
 - lens

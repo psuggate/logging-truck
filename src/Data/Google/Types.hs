@@ -1,6 +1,7 @@
 {-# LANGUAGE DataKinds, DerivingStrategies, FlexibleContexts,
-             FunctionalDependencies, MultiParamTypeClasses, OverloadedStrings,
-             PatternSynonyms, ScopedTypeVariables, TypeFamilies #-}
+             FunctionalDependencies, MultiParamTypeClasses, NoImplicitPrelude,
+             OverloadedStrings, PatternSynonyms, ScopedTypeVariables,
+             TypeFamilies #-}
 
 ------------------------------------------------------------------------------
 -- |
@@ -38,7 +39,6 @@ import           Control.Monad.IO.Unlift
 import           Data.Aeson              (FromJSON, ToJSON)
 import qualified Data.ByteString.Builder as B
 import           Data.Event.Status       hiding (stderrLogger, stdoutLogger)
-import           Dhall
 import           Gogol                   (Base64 (..))
 import qualified Gogol.Internal.Logger   as Google
 import           Relude
@@ -59,7 +59,7 @@ class HasProject t a | t -> a where
 newtype Project
   = Project { getProject :: Text }
   deriving (Eq, Generic, Show)
-  deriving newtype (FromDhall, FromJSON, NFData, ToJSON)
+  deriving newtype (FromJSON, NFData, ToJSON)
 
 instance IsString Project where
   fromString  = Project . toText

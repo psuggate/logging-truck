@@ -1,5 +1,6 @@
-{-# LANGUAGE DataKinds, DerivingStrategies, FlexibleContexts, OverloadedStrings,
-             PatternSynonyms, RankNTypes, ScopedTypeVariables, TypeFamilies #-}
+{-# LANGUAGE DataKinds, DerivingStrategies, FlexibleContexts, NoImplicitPrelude,
+             OverloadedStrings, PatternSynonyms, RankNTypes,
+             ScopedTypeVariables, TypeFamilies #-}
 
 ------------------------------------------------------------------------------
 -- |
@@ -15,33 +16,51 @@
 module Control.Monad.Google
   (
     Google (..)
+  , GoogleT (..)
+
   , HasEnv (..)
   , Env
+  , MonadUnliftIO
 
   , makeEnv
   , newGoogleEnv
 
   , runGoogle
+  , runGoogleT
   , withGoogle
   )
 where
 
 import           Control.Lens                 (lens, (.~))
+import           Control.Monad.IO.Unlift      (MonadUnliftIO)
 import           Control.Monad.Trans.Resource (ResourceT, runResourceT)
+import           GHC.TypeLits                 (Symbol)
 import           Gogol                        (Env, HasEnv (..))
 import qualified Gogol                        as Google
 import qualified Gogol.Auth                   as Google
 import           Relude
 import           System.Logger                (HasSeverity (..), Severity (..))
 
--- import           Control.Monad.Trans.Reader
-
 
 -- * Google monad
 ------------------------------------------------------------------------------
 newtype Google scopes a
   = Google { getGoogle :: ReaderT (Env scopes) (ResourceT IO) a }
-  deriving newtype (Applicative, Functor, Monad, MonadReader (Env scopes))
+  deriving newtype
+    ( Applicative
+    , Functor
+    , Monad
+    , MonadIO
+    , MonadReader (Env scopes)
+    , MonadUnliftIO
+    )
+
+------------------------------------------------------------------------------
+-- | Generalise the above monad to work with more environment-types, and over
+--   more base-monads.
+newtype GoogleT env (scopes :: [Symbol]) m a
+  = GoogleT { getGoogleT :: ReaderT env (ResourceT m) a }
+  deriving newtype (Applicative, Functor, Monad, MonadReader env)
 
 
 -- * Instances
@@ -86,6 +105,18 @@ newGoogleEnv logger = liftIO $ do
 
 -- * Google evaluation
 ------------------------------------------------------------------------------
+-- | Evaluate the @GoogleT@-based action within the given context.
+runGoogleT
+  :: forall env scopes m a. MonadUnliftIO m
+  => Google.KnownScopes scopes
+  => Google.HasEnv scopes env
+  => env
+  -> GoogleT env scopes m a
+  -> m a
+runGoogleT env = runResourceT . flip runReaderT env . getGoogleT
+
+------------------------------------------------------------------------------
+-- | Evaluate the @Google@ action within the given context.
 runGoogle
   :: forall scopes a. Google.KnownScopes scopes
   => Env scopes
@@ -105,3 +136,20 @@ withGoogle action = do
     <&> (Google.envLogger .~ lgr)
       . (Google.envScopes .~ (Proxy :: Proxy scopes))
   runGoogle env action
+
+{-- }
+------------------------------------------------------------------------------
+-- | Run the Google Cloud action within an appropriately-scoped context.
+withGoogleT
+  :: forall env scopes m a. MonadUnliftIO m
+  => Google.KnownScopes scopes
+  => Google.HasEnv scopes env
+  => GoogleT env scopes m a
+  -> m a
+withGoogleT action = do
+  lgr <- Google.newLogger Google.Debug stdout
+  env <- Google.newEnv
+    <&> (Google.envLogger .~ lgr)
+      . (Google.envScopes .~ (Proxy :: Proxy scopes))
+  runGoogleT env action
+--}

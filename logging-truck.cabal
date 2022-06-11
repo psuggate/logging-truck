@@ -31,6 +31,9 @@ library
       Data.Google.Logger
       Data.Google.Types
       Network.Google.BigQuery
+      Network.Google.BigQuery.Dataset
+      Network.Google.BigQuery.Table
+      Network.Google.BigQuery.Types
       Network.Google.PubSub
       System.Logger
       System.Logger.Class
@@ -47,12 +50,10 @@ library
       FlexibleInstances
       GeneralisedNewtypeDeriving
       InstanceSigs
-      NoImplicitPrelude
       ScopedTypeVariables
       StandaloneDeriving
       TupleSections
       TypeApplications
-      TypeFamilies
   ghc-options: -Wall
   build-depends:
       aeson
@@ -60,7 +61,6 @@ library
     , bytestring
     , co-log-core
     , containers
-    , dhall
     , double-conversion
     , fast-logger
     , gogol
@@ -91,12 +91,10 @@ executable logging-truck-exe
       FlexibleInstances
       GeneralisedNewtypeDeriving
       InstanceSigs
-      NoImplicitPrelude
       ScopedTypeVariables
       StandaloneDeriving
       TupleSections
       TypeApplications
-      TypeFamilies
   ghc-options: -Wall -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       aeson
@@ -104,7 +102,6 @@ executable logging-truck-exe
     , bytestring
     , co-log-core
     , containers
-    , dhall
     , double-conversion
     , fast-logger
     , gogol
@@ -137,12 +134,10 @@ test-suite logging-truck-test
       FlexibleInstances
       GeneralisedNewtypeDeriving
       InstanceSigs
-      NoImplicitPrelude
       ScopedTypeVariables
       StandaloneDeriving
       TupleSections
       TypeApplications
-      TypeFamilies
   ghc-options: -Wall -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       aeson
@@ -150,7 +145,6 @@ test-suite logging-truck-test
     , bytestring
     , co-log-core
     , containers
-    , dhall
     , double-conversion
     , fast-logger
     , gogol
@@ -184,12 +178,10 @@ benchmark rubs-bench
       FlexibleInstances
       GeneralisedNewtypeDeriving
       InstanceSigs
-      NoImplicitPrelude
       ScopedTypeVariables
       StandaloneDeriving
       TupleSections
       TypeApplications
-      TypeFamilies
   ghc-options: -Wall -Wall
   build-depends:
       aeson
@@ -199,7 +191,6 @@ benchmark rubs-bench
     , containers
     , criterion
     , deepseq
-    , dhall
     , double-conversion
     , fast-logger
     , gogol

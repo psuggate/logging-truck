@@ -11,7 +11,8 @@
 --
 ------------------------------------------------------------------------------
 
-module Network.Google.BigQuery
+module Network.Google.BigQuery where
+{-- }
   (
     module Export
   )
@@ -23,3 +24,4 @@ import           Data.Google.Types               as Export
 import           Network.Google.BigQuery.Dataset as Export
 import           Network.Google.BigQuery.Table   as Export
 import           Network.Google.BigQuery.Types   as Export
+--}

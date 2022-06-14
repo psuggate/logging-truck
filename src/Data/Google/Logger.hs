@@ -1,6 +1,7 @@
 {-# LANGUAGE FlexibleContexts, LambdaCase, NoImplicitPrelude #-}
 
-module Data.Google.Logger
+module Data.Google.Logger where
+{-- }
   (
     module Export
 
@@ -33,3 +34,4 @@ translateSeverity  = \case
   Error -> Colog.Error
   Debug -> Colog.Debug
   Trace -> Colog.Debug
+--}

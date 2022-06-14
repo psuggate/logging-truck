@@ -63,10 +63,6 @@ library
     , containers
     , double-conversion
     , fast-logger
-    , gogol
-    , gogol-bigquery
-    , gogol-core
-    , gogol-pubsub
     , http-api-data
     , lens
     , relude
@@ -104,10 +100,6 @@ executable logging-truck-exe
     , containers
     , double-conversion
     , fast-logger
-    , gogol
-    , gogol-bigquery
-    , gogol-core
-    , gogol-pubsub
     , http-api-data
     , lens
     , logging-truck
@@ -147,10 +139,6 @@ test-suite logging-truck-test
     , containers
     , double-conversion
     , fast-logger
-    , gogol
-    , gogol-bigquery
-    , gogol-core
-    , gogol-pubsub
     , hspec
     , http-api-data
     , lens
@@ -193,10 +181,6 @@ benchmark rubs-bench
     , deepseq
     , double-conversion
     , fast-logger
-    , gogol
-    , gogol-bigquery
-    , gogol-core
-    , gogol-pubsub
     , http-api-data
     , lens
     , logging-truck

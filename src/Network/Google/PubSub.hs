@@ -14,7 +14,8 @@
 --
 ------------------------------------------------------------------------------
 
-module Network.Google.PubSub
+module Network.Google.PubSub where
+{-- }
   (
     module Export
 
@@ -127,3 +128,4 @@ publish proj topic payload = Google $ do
 ------------------------------------------------------------------------------
 toMessage :: ByteString -> PubSub.PubsubMessage
 toMessage payload = PubSub.newPubsubMessage & detailsOf ?~ payload
+--}

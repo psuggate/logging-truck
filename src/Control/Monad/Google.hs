@@ -13,7 +13,8 @@
 --
 ------------------------------------------------------------------------------
 
-module Control.Monad.Google
+module Control.Monad.Google where
+{-- }
   (
     Google (..)
   , GoogleT (..)
@@ -152,4 +153,5 @@ withGoogleT action = do
     <&> (Google.envLogger .~ lgr)
       . (Google.envScopes .~ (Proxy :: Proxy scopes))
   runGoogleT env action
+--}
 --}

@@ -14,7 +14,8 @@
 --
 ------------------------------------------------------------------------------
 
-module Data.Google.Types
+module Data.Google.Types where
+{-- }
   (
     module Export
   , HasPath (..)
@@ -128,3 +129,4 @@ googleLogAction f = LogAction $ \(StatusMessage l _ d) -> liftIO $ do
 ------------------------------------------------------------------------------
 toBase64 :: Text -> Base64
 toBase64  = Base64 . encodeUtf8
+--}

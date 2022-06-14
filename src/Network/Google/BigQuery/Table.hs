@@ -4,6 +4,7 @@
 
 module Network.Google.BigQuery.Table where
 
+{-- }
 import           Control.Lens                  (lens, (?~))
 import           Control.Monad.Google
 import           Control.Monad.Google          as Export
@@ -39,4 +40,5 @@ create did tid = withGoogleT createTable
 -- update (via 'patch'?)
 -- delete
 -- list
+--}
 --}

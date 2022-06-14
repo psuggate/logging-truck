@@ -36,10 +36,10 @@ dependencies:
 - http-api-data
 - lens
 - fast-logger
-- gogol
-- gogol-bigquery
-- gogol-core
-- gogol-pubsub
+# - gogol
+# - gogol-bigquery
+# - gogol-core
+# - gogol-pubsub
 - relude
 - resourcet
 - text

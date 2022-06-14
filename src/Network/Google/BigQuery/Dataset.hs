@@ -2,6 +2,7 @@
 
 module Network.Google.BigQuery.Dataset where
 
+{-- }
 import           Control.Lens                  (lens, (?~))
 import           Control.Monad.Google          as Export
 import           Data.Aeson                    as Aeson
@@ -33,3 +34,4 @@ createDataset pid did = Google $ do
       proj = coerce pid
   env `Google.send` BigQuery.newBigQueryDatasetsInsert dreq proj
   -- BigQuery.id <$> env `Google.send` BigQuery.newBigQueryDatasetsInsert dreq proj
+--}

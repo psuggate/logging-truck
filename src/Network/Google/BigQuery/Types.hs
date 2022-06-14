@@ -1,7 +1,8 @@
 {-# LANGUAGE ConstraintKinds, DeriveAnyClass, DeriveGeneric, DerivingStrategies,
              GADTs, NoImplicitPrelude, OverloadedStrings #-}
 
-module Network.Google.BigQuery.Types
+module Network.Google.BigQuery.Types where
+{-- }
   (
     module Network.Google.BigQuery.Types
   , module Export
@@ -154,3 +155,4 @@ jsonOpts'  = defaultOptions
   { omitNothingFields = True
   , fieldLabelModifier = List.tail . List.dropWhile (/= '\'')
   }
+--}

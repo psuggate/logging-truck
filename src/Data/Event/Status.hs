@@ -56,7 +56,7 @@ module Data.Event.Status
   , actionLogger
 
   , exampleStatusEvent
-  , unsafeReadUUID
+  -- , unsafeReadUUID
   )
 where
 

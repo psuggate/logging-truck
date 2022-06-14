@@ -6,19 +6,6 @@ packages:
 
 extra-deps:
 - co-log-core-0.3.1.0@sha256:9794bdedd1391decd0e22bdfe2b11abcb42e6cff7a4531e1f8882890828f4e63,3816
-# - git: https://github.com/brendanhay/gogol.git
-#   commit: 494098af1709d32b75b0be41157547ae7a2bd89d
-#   subdirs:
-#   - lib/gogol
-#   - lib/gogol-core
-#   - lib/services/gogol-bigquery
-#   - lib/services/gogol-pubsub
-# - git: https://github.com/psuggate/some-google.git
-#   commit: 1e30194bccb8af3b2da505c9e7cda88752a01278
-#   subdirs:
-#   - packages/bigquery
-#   - packages/google-monad
-#   - packages/pubsub
 
 # Override default flag values for local packages and extra-deps
 # flags: {}

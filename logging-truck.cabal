@@ -26,15 +26,7 @@ source-repository head
 
 library
   exposed-modules:
-      Control.Monad.Google
       Data.Event.Status
-      Data.Google.Logger
-      Data.Google.Types
-      Network.Google.BigQuery
-      Network.Google.BigQuery.Dataset
-      Network.Google.BigQuery.Table
-      Network.Google.BigQuery.Types
-      Network.Google.PubSub
       System.Logger
       System.Logger.Class
       System.Logger.JSON

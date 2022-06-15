@@ -1,5 +1,6 @@
-{-# LANGUAGE DeriveAnyClass, DerivingStrategies, FunctionalDependencies,
-             MultiParamTypeClasses, NoImplicitPrelude, OverloadedStrings #-}
+{-# LANGUAGE DeriveAnyClass, DerivingStrategies, DerivingVia,
+             FunctionalDependencies, MultiParamTypeClasses, NoImplicitPrelude,
+             OverloadedStrings #-}
 
 ------------------------------------------------------------------------------
 -- |
@@ -67,6 +68,7 @@ import           Data.Aeson              (FromJSON (..), Options (..),
                                           ToJSON (..), defaultOptions, encode,
                                           genericParseJSON, genericToJSON)
 import qualified Data.List               as List
+import           Data.OpenApi            (ToParamSchema, ToSchema)
 import           Data.Time.Clock         as Time (UTCTime, getCurrentTime)
 import           Data.UUID               as UUID (UUID)
 import qualified Data.UUID               as UUID (fromString)
@@ -103,6 +105,8 @@ data StatusEvent
   deriving (Eq, Generic, Show)
   deriving anyclass (NFData)
 
+instance ToSchema StatusEvent
+
 instance ToJSON StatusEvent where
   toJSON = genericToJSON jsonOpts
 
@@ -129,6 +133,9 @@ newtype MessageId
   deriving (Eq, Generic, Show)
   deriving newtype (FromHttpApiData, FromJSON, NFData, ToJSON)
 
+deriving via UUID instance ToSchema MessageId
+deriving via UUID instance ToParamSchema MessageId
+
 instance IsString MessageId where
   fromString = MessageId . unsafeReadUUID "MessageId"
 
@@ -138,6 +145,9 @@ newtype ServiceName
   deriving (Eq, Generic, Show)
   deriving newtype (FromHttpApiData, FromJSON, NFData, ToJSON)
 
+deriving via Text instance ToSchema ServiceName
+deriving via Text instance ToParamSchema ServiceName
+
 instance IsString ServiceName where
   fromString = ServiceName . toText
 
@@ -146,6 +156,9 @@ newtype Platform
   = Platform { getPlatform :: Text }
   deriving (Eq, Generic, Show)
   deriving newtype (FromHttpApiData, FromJSON, NFData, ToJSON)
+
+deriving via Text instance ToSchema Platform
+deriving via Text instance ToParamSchema Platform
 
 instance IsString Platform where
   fromString = Platform . toText
@@ -179,6 +192,9 @@ newtype EventStatus
   = EventStatus { getEventStatus :: Text }
   deriving (Eq, Generic, Show)
   deriving newtype (FromHttpApiData, FromJSON, NFData, ToJSON)
+
+deriving via Text instance ToSchema EventStatus
+deriving via Text instance ToParamSchema EventStatus
 
 instance IsString EventStatus where
   fromString = EventStatus . toText

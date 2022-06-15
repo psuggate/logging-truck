@@ -5,7 +5,7 @@ cabal-version: 1.12
 -- see: https://github.com/sol/hpack
 
 name:           logging-truck
-version:        0.1.0.4
+version:        0.1.0.5
 synopsis:       Logging generators and transporters
 description:    Please see the README on GitHub at <https://github.com/githubabuser/logging-truck#readme>
 category:       System
@@ -57,6 +57,7 @@ library
     , fast-logger
     , http-api-data
     , lens
+    , openapi3
     , relude
     , resourcet
     , text
@@ -95,6 +96,7 @@ executable logging-truck-exe
     , http-api-data
     , lens
     , logging-truck
+    , openapi3
     , relude
     , resourcet
     , text
@@ -135,6 +137,7 @@ test-suite logging-truck-test
     , http-api-data
     , lens
     , logging-truck
+    , openapi3
     , relude
     , resourcet
     , text
@@ -176,6 +179,7 @@ benchmark rubs-bench
     , http-api-data
     , lens
     , logging-truck
+    , openapi3
     , relude
     , resourcet
     , text

@@ -1,5 +1,5 @@
 name:                logging-truck
-version:             0.1.0.4
+version:             0.1.0.5
 github:              "githubabuser/logging-truck"
 license:             BSD3
 author:              "Patrick Suggate"
@@ -36,6 +36,7 @@ dependencies:
 - http-api-data
 - lens
 - fast-logger
+- openapi3
 - relude
 - resourcet
 - text

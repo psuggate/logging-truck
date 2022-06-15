@@ -48,6 +48,7 @@ import           Data.Aeson              (FromJSON (..), ToJSON (..))
 import qualified Data.ByteString.Builder as B
 import           Data.ByteString.Char8   (pack)
 import           Data.Map.Strict         as Map
+import qualified Data.OpenApi            as OpenAPI
 import           Data.String
 import           Data.UnixTime
 import           Relude
@@ -97,6 +98,9 @@ data Severity
   | Fatal
   deriving (Enum, Eq, Generic, Ord, Read, Show)
   deriving anyclass (FromJSON, NFData, ToJSON)
+
+instance OpenAPI.ToSchema Severity
+instance OpenAPI.ToParamSchema Severity
 
 data Output
   = StdOut

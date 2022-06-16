@@ -99,9 +99,13 @@ data Severity
   deriving (Enum, Eq, Generic, Ord, Read, Show)
   deriving anyclass (FromJSON, NFData, ToJSON)
 
+instance Hashable Severity where
+  hashWithSalt s = hashWithSalt s . fromEnum
+
 instance OpenAPI.ToSchema Severity
 instance OpenAPI.ToParamSchema Severity
 
+------------------------------------------------------------------------------
 data Output
   = StdOut
   | StdErr

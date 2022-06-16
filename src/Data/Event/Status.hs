@@ -135,6 +135,7 @@ newtype MessageId
 
 deriving via UUID instance ToSchema MessageId
 deriving via UUID instance ToParamSchema MessageId
+deriving newtype  instance Hashable MessageId
 
 instance IsString MessageId where
   fromString = MessageId . unsafeReadUUID "MessageId"
@@ -147,6 +148,7 @@ newtype ServiceName
 
 deriving via Text instance ToSchema ServiceName
 deriving via Text instance ToParamSchema ServiceName
+deriving newtype  instance Hashable ServiceName
 
 instance IsString ServiceName where
   fromString = ServiceName . toText
@@ -159,6 +161,7 @@ newtype Platform
 
 deriving via Text instance ToSchema Platform
 deriving via Text instance ToParamSchema Platform
+deriving newtype  instance Hashable Platform
 
 instance IsString Platform where
   fromString = Platform . toText
@@ -195,6 +198,7 @@ newtype EventStatus
 
 deriving via Text instance ToSchema EventStatus
 deriving via Text instance ToParamSchema EventStatus
+deriving newtype  instance Hashable EventStatus
 
 instance IsString EventStatus where
   fromString = EventStatus . toText

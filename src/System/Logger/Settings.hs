@@ -1,5 +1,6 @@
 {-# LANGUAGE DeriveAnyClass, DeriveGeneric, DerivingStrategies, DerivingVia,
-             NoImplicitPrelude, OverloadedStrings, TemplateHaskell #-}
+             NoImplicitPrelude, OverloadedStrings, TemplateHaskell,
+             TupleSections #-}
 
 -- This Source Code Form is subject to the terms of the Mozilla Public
 -- License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -47,13 +48,18 @@ import           Control.Lens            (Lens', makeLenses, over, set, (.~))
 import           Data.Aeson              (FromJSON (..), ToJSON (..))
 import qualified Data.ByteString.Builder as B
 import           Data.ByteString.Char8   (pack)
+import qualified Data.Char               as Char
 import           Data.Map.Strict         as Map
+import           Data.MonoTraversable    (omap)
 import qualified Data.OpenApi            as OpenAPI
 import           Data.String
 import           Data.UnixTime
 import           Relude
 import           System.Log.FastLogger   (defaultBufSize)
 import           System.Logger.Message
+import           Text.Printf
+import           Web.HttpApiData         (FromHttpApiData (..),
+                                          ToHttpApiData (..))
 
 
 -- * Convenience function-families
@@ -100,7 +106,20 @@ data Severity
   deriving anyclass (FromJSON, NFData, ToJSON)
 
 instance Hashable Severity where
-  hashWithSalt s = hashWithSalt s . fromEnum
+  hashWithSalt s = hashWithSalt s . ("Severity" :: Text,) . fromEnum
+
+instance ToHttpApiData Severity where
+  toUrlPiece = show
+
+instance FromHttpApiData Severity where
+  parseUrlPiece t = case omap Char.toUpper t of
+    "TRACE" -> Right Trace
+    "DEBUG" -> Right Debug
+    "INFO"  -> Right Info
+    "WARN"  -> Right Warn
+    "ERROR" -> Right Error
+    "FATAL" -> Right Fatal
+    _       -> Left . fromString $ printf "Unrecognised severity: %s" t
 
 instance OpenAPI.ToSchema Severity
 instance OpenAPI.ToParamSchema Severity

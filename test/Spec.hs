@@ -1,4 +1,5 @@
-{-# LANGUAGE NoImplicitPrelude, OverloadedStrings #-}
+{-# LANGUAGE FlexibleContexts, NoImplicitPrelude, NoMonomorphismRestriction,
+             OverloadedStrings #-}
 
 module Main where
 
@@ -8,6 +9,7 @@ import           Relude
 import           Test.Hspec
 
 import           Data.Hashable
+import           Web.HttpApiData   (toUrlPiece)
 
 
 -- * Top-level tests
@@ -21,8 +23,8 @@ spec  = describe "Encoding and decoding of event-types" $ do
       let mid = "05558c29-e918-42ae-b66c-36551672a592" :: MessageId
 
       it "can JSON-encode a @MessageId@" $ do
-        let txt = show (getMessageId mid) :: Text
-        Aeson.encode mid `shouldBe` Aeson.encode txt
+        let str = show (getMessageId mid) :: Text
+        Aeson.encode mid `shouldBe` Aeson.encode str
         Aeson.decode (Aeson.encode mid) `shouldBe` Just mid
 
       it "can hash a @MessageId@" $ do
@@ -57,6 +59,26 @@ spec  = describe "Encoding and decoding of event-types" $ do
 
       it "can hash an @EventStatus@" $ do
         hash evt `shouldBe` hash (getEventStatus evt)
+
+    context "Tests for @Severity@ data type" $ do
+      let sev = [Trace ..Fatal]
+          str = map (encodeUtf8 . txt . txt) sev
+
+      it "can JSON-encode each @Severity@" $ do
+        map Aeson.encode sev `shouldBe` str
+        catMaybes (Aeson.decode . Aeson.encode <$> sev) `shouldBe` sev
+
+      it "can hash each @Severity@" $ do
+        map hash sev `shouldBe` (hash . ("Severity" :: Text,) . fromEnum <$> sev)
+
+      it "can URL-encode each @Severity@" $ do
+        map toUrlPiece sev `shouldBe` map txt sev
+
+
+-- * Helpers
+------------------------------------------------------------------------------
+txt :: Show a => a -> Text
+txt  = show
 
 
 -- * Test-runner

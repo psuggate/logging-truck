@@ -5,7 +5,7 @@ cabal-version: 1.12
 -- see: https://github.com/sol/hpack
 
 name:           logging-truck
-version:        0.1.0.6
+version:        0.1.0.7
 synopsis:       Logging generators and transporters
 description:    Please see the README on GitHub at <https://github.com/githubabuser/logging-truck#readme>
 category:       System
@@ -55,8 +55,10 @@ library
     , containers
     , double-conversion
     , fast-logger
+    , hashable
     , http-api-data
     , lens
+    , mono-traversable
     , openapi3
     , relude
     , resourcet
@@ -93,9 +95,11 @@ executable logging-truck-exe
     , containers
     , double-conversion
     , fast-logger
+    , hashable
     , http-api-data
     , lens
     , logging-truck
+    , mono-traversable
     , openapi3
     , relude
     , resourcet
@@ -138,6 +142,7 @@ test-suite logging-truck-test
     , http-api-data
     , lens
     , logging-truck
+    , mono-traversable
     , openapi3
     , relude
     , resourcet
@@ -177,9 +182,11 @@ benchmark rubs-bench
     , deepseq
     , double-conversion
     , fast-logger
+    , hashable
     , http-api-data
     , lens
     , logging-truck
+    , mono-traversable
     , openapi3
     , relude
     , resourcet

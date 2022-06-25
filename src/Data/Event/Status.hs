@@ -1,4 +1,4 @@
-{-# LANGUAGE DeriveAnyClass, DerivingStrategies, DerivingVia,
+{-# LANGUAGE DeriveAnyClass, DerivingStrategies, DerivingVia, FlexibleContexts,
              FunctionalDependencies, MultiParamTypeClasses, NoImplicitPrelude,
              OverloadedStrings #-}
 
@@ -60,23 +60,29 @@ module Data.Event.Status
   )
 where
 
-import           Colog.Core              (LogAction (..))
-import           Control.Lens            (Lens', lens, (.~), (?~), (^.))
+import           Colog.Core                   (LogAction (..))
+import           Control.Lens                 (Lens', lens, mapped, (.~), (?~),
+                                               (^.))
 import           Control.Monad.IO.Unlift
-import           Data.Aeson              (FromJSON (..), Options (..),
-                                          ToJSON (..), defaultOptions, encode,
-                                          genericParseJSON, genericToJSON)
-import qualified Data.List               as List
-import           Data.OpenApi            (ToParamSchema, ToSchema)
-import           Data.Time.Clock         as Time (UTCTime, getCurrentTime)
-import           Data.UUID               as UUID (UUID)
-import qualified Data.UUID               as UUID (fromString)
-import qualified Data.UUID.V4            as UUID
+import           Data.Aeson                   (FromJSON (..), Options (..),
+                                               ToJSON (..), defaultOptions,
+                                               encode, genericParseJSON,
+                                               genericToJSON)
+import qualified Data.List                    as List
+import           Data.OpenApi                 (ToParamSchema, ToSchema (..))
+import qualified Data.OpenApi                 as OpenAPI
+import qualified Data.OpenApi.Declare         as OpenAPI
+import qualified Data.OpenApi.Internal.Schema as OpenAPI
+import           Data.Time.Clock              as Time (UTCTime, getCurrentTime)
+import           Data.UUID                    as UUID (UUID)
+import qualified Data.UUID                    as UUID (fromString)
+import qualified Data.UUID.V4                 as UUID
+import qualified GHC.Generics                 as Generics
 import           Relude
-import           System.Logger           as Logger
-import           System.Logger.Class     as Class (MonadLogger (..))
-import qualified Text.Read               as Text (read)
-import           Web.HttpApiData         (FromHttpApiData)
+import           System.Logger                as Logger
+import           System.Logger.Class          as Class (MonadLogger (..))
+import qualified Text.Read                    as Text (read)
+import           Web.HttpApiData              (FromHttpApiData)
 
 
 -- * Convenience function-families
@@ -104,7 +110,9 @@ data StatusEvent
   deriving (Eq, Generic, Show)
   deriving anyclass (NFData)
 
-instance ToSchema StatusEvent
+instance ToSchema StatusEvent where
+  declareNamedSchema _ = openApiSchemaWith describe exampleStatusEvent where
+    describe = "Information for a status-event record of the SixthSense platform"
 
 instance ToJSON StatusEvent where
   toJSON = genericToJSON jsonOpts
@@ -326,3 +334,26 @@ exampleStatusEvent  = StatusEvent
   , statusEvent'status   = Just resolved
   , statusEvent'message  = Just "have a great weekend!"
   }
+
+------------------------------------------------------------------------------
+openApiSchemaWith
+  :: forall a. Typeable a
+  => ToJSON a
+  => Generic a
+  => OpenAPI.GToSchema (Generics.Rep a)
+  => Text
+  -> a
+  -> OpenAPI.Declare (OpenAPI.Definitions OpenAPI.Schema) OpenAPI.NamedSchema
+openApiSchemaWith desc example =
+  OpenAPI.genericDeclareNamedSchema openApiSchemaOptions proxy
+    & mapped . OpenAPI.schema . OpenAPI.description ?~ desc
+    & mapped . OpenAPI.schema . OpenAPI.example ?~ toJSON example
+  where
+    proxy = Proxy :: Proxy a
+
+openApiSchemaOptions :: OpenAPI.SchemaOptions
+openApiSchemaOptions  =
+  let go xs = case List.elemIndex '\'' xs of
+        Just i  -> List.drop (i+1) xs
+        Nothing -> xs
+  in  OpenAPI.defaultSchemaOptions { OpenAPI.fieldLabelModifier = go }

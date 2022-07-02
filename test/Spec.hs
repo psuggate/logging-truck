@@ -30,6 +30,9 @@ spec  = describe "Encoding and decoding of event-types" $ do
       it "can hash a @MessageId@" $ do
         hash mid `shouldBe` hash (getMessageId mid)
 
+      it "can Text-encode a @MessageId@ (to a UUID)" $ do
+        toText mid `shouldBe` "05558c29-e918-42ae-b66c-36551672a592"
+
     context "Tests for @ServiceName@ data type" $ do
       let svc = "logging-service" :: ServiceName
 

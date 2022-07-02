@@ -75,7 +75,7 @@ import qualified Data.OpenApi.Declare         as OpenAPI
 import qualified Data.OpenApi.Internal.Schema as OpenAPI
 import           Data.Time.Clock              as Time (UTCTime, getCurrentTime)
 import           Data.UUID                    as UUID (UUID)
-import qualified Data.UUID                    as UUID (fromString)
+import qualified Data.UUID                    as UUID (fromString, toText)
 import qualified Data.UUID.V4                 as UUID
 import qualified GHC.Generics                 as Generics
 import           Relude
@@ -146,6 +146,10 @@ deriving newtype  instance Hashable MessageId
 
 instance IsString MessageId where
   fromString = MessageId . unsafeReadUUID "MessageId"
+
+instance ToText MessageId where
+  toText :: MessageId -> Text
+  toText  = UUID.toText . getMessageId
 
 ------------------------------------------------------------------------------
 newtype ServiceName

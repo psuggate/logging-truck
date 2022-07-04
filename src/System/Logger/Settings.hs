@@ -103,7 +103,13 @@ data Severity
   | Error
   | Fatal
   deriving (Enum, Eq, Generic, Ord, Read, Show)
-  deriving anyclass (FromJSON, NFData, ToJSON)
+  deriving anyclass (NFData)
+
+instance ToJSON Severity where
+  toJSON = toJSON . fromEnum
+
+instance FromJSON Severity where
+  parseJSON = parseJSON >=> pure . toEnum
 
 instance Hashable Severity where
   hashWithSalt s = hashWithSalt s . ("Severity" :: Text,) . fromEnum

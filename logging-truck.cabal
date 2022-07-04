@@ -5,7 +5,7 @@ cabal-version: 1.12
 -- see: https://github.com/sol/hpack
 
 name:           logging-truck
-version:        0.1.0.8
+version:        0.1.0.10
 synopsis:       Logging generators and transporters
 description:    Please see the README on GitHub at <https://github.com/githubabuser/logging-truck#readme>
 category:       System

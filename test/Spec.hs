@@ -65,7 +65,7 @@ spec  = describe "Encoding and decoding of event-types" $ do
 
     context "Tests for @Severity@ data type" $ do
       let sev = [Trace ..Fatal]
-          str = map (encodeUtf8 . txt . txt) sev
+          str = map (encodeUtf8 . txt . fromEnum) sev
 
       it "can JSON-encode each @Severity@" $ do
         map Aeson.encode sev `shouldBe` str

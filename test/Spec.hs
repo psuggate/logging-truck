@@ -103,6 +103,9 @@ spec  = describe "Encoding and decoding of event-types" $ do
       let sev = [Trace ..Fatal]
           str = map (encodeUtf8 . txt . fromEnum) sev
 
+      it "can @read@ and @show@ each @Severity@" $ do
+        map (Text.read . show) sev `shouldBe` sev
+
       it "can JSON-encode each @Severity@" $ do
         map Aeson.encode sev `shouldBe` str
         catMaybes (Aeson.decode . Aeson.encode <$> sev) `shouldBe` sev
@@ -112,6 +115,10 @@ spec  = describe "Encoding and decoding of event-types" $ do
 
       it "can URL-encode each @Severity@" $ do
         map toUrlPiece sev `shouldBe` map txt sev
+
+      it "can JSON-decode string-representations of a @Severity@" $ do
+        let ss = encodeUtf8 . txt . txt <$> sev
+        catMaybes (Aeson.decode <$> ss) `shouldBe` sev
 
 
 -- * Helpers

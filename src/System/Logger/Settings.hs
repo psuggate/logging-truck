@@ -46,6 +46,7 @@ where
 
 import           Control.Lens            (Lens', makeLenses, over, set, (.~))
 import           Data.Aeson              (FromJSON (..), ToJSON (..))
+import qualified Data.Aeson.Types        as Aeson
 import qualified Data.ByteString.Builder as B
 import           Data.ByteString.Char8   (pack)
 import qualified Data.Char               as Char
@@ -109,7 +110,13 @@ instance ToJSON Severity where
   toJSON = toJSON . fromEnum
 
 instance FromJSON Severity where
-  parseJSON = parseJSON >=> pure . toEnum
+  parseJSON v = case v of
+    Aeson.Number _ -> toEnum <$> parseJSON v
+    Aeson.String s ->
+      let s' = toString s
+          er = "can not parse a Severity from the given string: " <> s'
+      in  maybe (fail er) pure $ readMaybe s' <|> toEnum `fmap` readMaybe s'
+    invalid        -> Aeson.typeMismatch "Number or String" invalid
 
 instance Hashable Severity where
   hashWithSalt s = hashWithSalt s . ("Severity" :: Text,) . fromEnum

@@ -32,6 +32,10 @@ module Data.Event.Status
   , ServiceName (..)
   , Severity (..)
 
+  , DateTime (..)
+  , dateTime
+  , parseUTC
+
   , StatusMessage (..)
   , logEvent
   , eventMsg
@@ -73,7 +77,9 @@ import           Data.OpenApi                 (ToParamSchema, ToSchema (..))
 import qualified Data.OpenApi                 as OpenAPI
 import qualified Data.OpenApi.Declare         as OpenAPI
 import qualified Data.OpenApi.Internal.Schema as OpenAPI
+import           Data.Scientific              (Scientific)
 import           Data.Time.Clock              as Time (UTCTime, getCurrentTime)
+import           Data.Time.Clock.System       (SystemTime (..), systemToUTCTime)
 import           Data.UUID                    as UUID (UUID)
 import qualified Data.UUID                    as UUID (fromString, toText)
 import qualified Data.UUID.V4                 as UUID
@@ -82,7 +88,7 @@ import           Relude
 import           System.Logger                as Logger
 import           System.Logger.Class          as Class (MonadLogger (..))
 import qualified Text.Read                    as Text (read)
-import           Web.HttpApiData              (FromHttpApiData)
+import           Web.HttpApiData              (FromHttpApiData, ToHttpApiData)
 
 
 -- * Convenience function-families
@@ -100,7 +106,7 @@ class HasStatusOf t a | t -> a where
 data StatusEvent
   = StatusEvent
       { statusEvent'id       :: !MessageId
-      , statusEvent'datetime :: !UTCTime
+      , statusEvent'datetime :: !DateTime
       , statusEvent'platform :: !Platform
       , statusEvent'service  :: !ServiceName
       , statusEvent'severity :: !Severity
@@ -176,6 +182,29 @@ deriving newtype  instance Hashable Platform
 
 instance IsString Platform where
   fromString = Platform . toText
+
+------------------------------------------------------------------------------
+-- | Wrapped @UTCTime@ so that different parsers can be used for different
+--   Google services; e.g., BigQuery returns time-values as a stringified
+--   floating-point representation (which does not automatically parse, when
+--   using the 'time' library).
+newtype DateTime
+  = DateTime { unDateTime :: UTCTime }
+  deriving (Eq, Generic, Ord)
+  deriving newtype
+    ( FromHttpApiData
+    , Hashable
+    , NFData
+    , Read
+    , Show
+    , ToHttpApiData
+    )
+
+deriving via Text instance ToSchema DateTime
+deriving via Text instance ToParamSchema DateTime
+
+instance ToJSON   DateTime where toJSON    = toJSON . unDateTime
+instance FromJSON DateTime where parseJSON = fmap DateTime . parseJSON
 
 
 -- * Data types for status-events
@@ -263,7 +292,7 @@ actionLogger l o n = do
 newStatusEvent :: Platform -> ServiceName -> Severity -> IO StatusEvent
 newStatusEvent p s l = do
   u <- MessageId <$> UUID.nextRandom
-  t <- Time.getCurrentTime
+  t <- DateTime <$> Time.getCurrentTime
   pure $ StatusEvent u t p s l Nothing Nothing
 
 ------------------------------------------------------------------------------
@@ -296,6 +325,24 @@ toStatusEvent p n (StatusMessage l s d) = do
   liftIO $ newStatusEvent p n l
     <&> statusOf  ?~ s
     <&> detailsOf ?~ d
+
+------------------------------------------------------------------------------
+-- | Attempt to parse a @DateTime@ from the given string-value.
+dateTime :: Text -> Maybe DateTime
+dateTime  = fmap DateTime . parseUTC . toString
+
+parseUTC :: String -> Maybe UTCTime
+parseUTC ts = readMaybe ts <|> fmap utctime (readMaybe ts)
+  where
+    systime :: Scientific -> SystemTime
+    systime x =
+      -- let secs = floor (toRealFloat x :: Double)
+      let secs = floor x
+          nano = round $ (x - fromIntegral secs) * 1e9
+      in  MkSystemTime secs nano
+
+    utctime :: Scientific -> UTCTime
+    utctime  = systemToUTCTime . systime
 
 
 -- * Helpers

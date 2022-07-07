@@ -4,12 +4,16 @@
 module Main where
 
 import           Data.Aeson        as Aeson
-import           Data.Event.Status
+import           Data.Hashable
+import           Data.Time.Clock   (UTCTime)
 import           Relude
 import           Test.Hspec
-
-import           Data.Hashable
+import qualified Text.Read         as Text (read)
 import           Web.HttpApiData   (toUrlPiece)
+
+------------------------------------------------------------------------------
+-- | Module under test
+import           Data.Event.Status
 
 
 -- * Top-level tests
@@ -32,6 +36,22 @@ spec  = describe "Encoding and decoding of event-types" $ do
 
       it "can Text-encode a @MessageId@ (to a UUID)" $ do
         toText mid `shouldBe` "05558c29-e918-42ae-b66c-36551672a592"
+
+    context "Parsing-tests for @DateTime@ values" $ do
+      let tim = "1.657102119810025e9" :: String
+          utc = Text.read str :: UTCTime
+          str = "2022-07-06 10:08:39.810025 UTC" :: String
+
+      it "can read an ISO8601 time value" $ do
+        parseUTC str `shouldBe` Just utc
+        dateTime (toText str) `shouldBe` Just (DateTime utc)
+
+      it "can read a POSIX-seconds time value" $ do
+        parseUTC tim `shouldBe` Just utc
+        dateTime (toText tim) `shouldBe` Just (DateTime utc)
+
+      it "can read a @DateTime@ value" $ do
+        Text.read str `shouldBe` DateTime utc
 
     context "Tests for @ServiceName@ data type" $ do
       let svc = "logging-service" :: ServiceName

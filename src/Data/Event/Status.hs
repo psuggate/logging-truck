@@ -68,10 +68,8 @@ import           Colog.Core                   (LogAction (..))
 import           Control.Lens                 (Lens', lens, mapped, (.~), (?~),
                                                (^.))
 import           Control.Monad.IO.Unlift
-import           Data.Aeson                   (FromJSON (..), Options (..),
-                                               ToJSON (..), defaultOptions,
-                                               encode, genericParseJSON,
-                                               genericToJSON)
+import           Data.Aeson                   as Aeson
+import qualified Data.Aeson.Types             as Aeson
 import qualified Data.List                    as List
 import           Data.OpenApi                 (ToParamSchema, ToSchema (..))
 import qualified Data.OpenApi                 as OpenAPI
@@ -80,6 +78,7 @@ import qualified Data.OpenApi.Internal.Schema as OpenAPI
 import           Data.Scientific              (Scientific)
 import           Data.Time.Clock              as Time (UTCTime, getCurrentTime)
 import           Data.Time.Clock.System       (SystemTime (..), systemToUTCTime)
+import qualified Data.Time.Format.ISO8601     as Time
 import           Data.UUID                    as UUID (UUID)
 import qualified Data.UUID                    as UUID (fromString, toText)
 import qualified Data.UUID.V4                 as UUID
@@ -87,6 +86,7 @@ import qualified GHC.Generics                 as Generics
 import           Relude
 import           System.Logger                as Logger
 import           System.Logger.Class          as Class (MonadLogger (..))
+import           Text.Printf
 import qualified Text.Read                    as Text (read)
 import           Web.HttpApiData              (FromHttpApiData, ToHttpApiData)
 
@@ -203,8 +203,18 @@ newtype DateTime
 deriving via Text instance ToSchema DateTime
 deriving via Text instance ToParamSchema DateTime
 
-instance ToJSON   DateTime where toJSON    = toJSON . unDateTime
-instance FromJSON DateTime where parseJSON = fmap DateTime . parseJSON
+instance ToJSON DateTime where
+  toJSON = toJSON . unDateTime
+
+instance FromJSON DateTime where
+  parseJSON xs = case xs of
+    Number ss -> pure $! DateTime (utctime ss)
+    String ts -> case dateTime ts of
+      Just dt -> pure dt
+      Nothing -> dtfail . fail $ printf "can not parse: %s" ts
+    invalid   -> dtfail $ Aeson.typeMismatch "String or Number" invalid
+    where
+      dtfail = Aeson.prependFailure "parsing DateTime failed, "
 
 
 -- * Data types for status-events
@@ -332,17 +342,18 @@ dateTime :: Text -> Maybe DateTime
 dateTime  = fmap DateTime . parseUTC . toString
 
 parseUTC :: String -> Maybe UTCTime
-parseUTC ts = readMaybe ts <|> fmap utctime (readMaybe ts)
+parseUTC ts = readMaybe ts
+  <|> Time.iso8601ParseM ts
+  <|> fmap utctime (readMaybe ts)
+
+utctime :: Scientific -> UTCTime
+utctime  = systemToUTCTime . systime
   where
     systime :: Scientific -> SystemTime
     systime x =
-      -- let secs = floor (toRealFloat x :: Double)
       let secs = floor x
           nano = round $ (x - fromIntegral secs) * 1e9
       in  MkSystemTime secs nano
-
-    utctime :: Scientific -> UTCTime
-    utctime  = systemToUTCTime . systime
 
 
 -- * Helpers

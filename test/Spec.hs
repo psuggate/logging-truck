@@ -5,7 +5,6 @@ module Main where
 
 import           Data.Aeson        as Aeson
 import           Data.Hashable
-import           Data.Time.Clock   (UTCTime)
 import           Relude
 import           Test.Hspec
 import qualified Text.Read         as Text (read)
@@ -39,19 +38,36 @@ spec  = describe "Encoding and decoding of event-types" $ do
 
     context "Parsing-tests for @DateTime@ values" $ do
       let tim = "1.657102119810025e9" :: String
-          utc = Text.read str :: UTCTime
+          (utc, dtu) = (Text.read str, DateTime utc)
           str = "2022-07-06 10:08:39.810025 UTC" :: String
+          iso = "2022-07-06T10:08:39.810025Z" :: String
+
+      it "can read a UTC time value" $ do
+        parseUTC str `shouldBe` Just utc
+        dateTime (toText str) `shouldBe` Just dtu
 
       it "can read an ISO8601 time value" $ do
-        parseUTC str `shouldBe` Just utc
-        dateTime (toText str) `shouldBe` Just (DateTime utc)
+        parseUTC iso `shouldBe` Just utc
+        dateTime (toText iso) `shouldBe` Just dtu
 
       it "can read a POSIX-seconds time value" $ do
         parseUTC tim `shouldBe` Just utc
-        dateTime (toText tim) `shouldBe` Just (DateTime utc)
+        dateTime (toText tim) `shouldBe` Just dtu
 
-      it "can read a @DateTime@ value" $ do
-        Text.read str `shouldBe` DateTime utc
+      it "can @show@ a @DateTime@ value" $ do
+        show dtu `shouldBe` str
+
+      it "can @read@ a @DateTime@ value" $ do
+        Text.read str `shouldBe` dtu
+
+      it "can JSON-decode @DateTime@ floating-point values" $ do
+        let enc :: String -> Maybe DateTime
+            enc  = Aeson.decode . encodeUtf8
+        enc tim `shouldBe` Just dtu
+
+      it "can JSON-decode @DateTime@ ISO8601 values" $ do
+        Aeson.decode (Aeson.encode dtu) `shouldBe` Just dtu
+        -- enc (show str) `shouldBe` Just dtu
 
     context "Tests for @ServiceName@ data type" $ do
       let svc = "logging-service" :: ServiceName

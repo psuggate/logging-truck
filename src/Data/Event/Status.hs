@@ -51,6 +51,8 @@ module Data.Event.Status
   , resolved
   , unknown
   , running
+  , starting
+  , stopping
 
   , StatusEvent (..)
   , newStatusEvent
@@ -266,8 +268,16 @@ resolved  = EventStatus "resolved"
 unknown :: EventStatus
 unknown  = EventStatus "unknown"
 
+------------------------------------------------------------------------------
+-- | Service state/stage.
+starting :: EventStatus
+starting  = EventStatus "starting"
+
 running :: EventStatus
 running  = EventStatus "running"
+
+stopping :: EventStatus
+stopping  = EventStatus "stopping"
 
 
 -- * Some standard loggers

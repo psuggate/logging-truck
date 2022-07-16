@@ -103,7 +103,7 @@ data Severity
   | Warn
   | Error
   | Fatal
-  deriving (Enum, Eq, Generic, Ord, Read, Show)
+  deriving (Bounded, Enum, Eq, Generic, Ord, Read, Show)
   deriving anyclass (NFData)
 
 instance ToJSON Severity where

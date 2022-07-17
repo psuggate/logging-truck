@@ -1,5 +1,5 @@
 resolver:
-  url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/19/7.yaml
+  url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/19/15.yaml
 
 packages:
 - .
@@ -7,26 +7,12 @@ packages:
 extra-deps:
 - co-log-core-0.3.1.0@sha256:9794bdedd1391decd0e22bdfe2b11abcb42e6cff7a4531e1f8882890828f4e63,3816
 
-# Override default flag values for local packages and extra-deps
 # flags: {}
 
-# Extra package databases containing global packages
 # extra-package-dbs: []
 
-# Control whether we use the GHC we find on the path
 # system-ghc: true
-#
-# Require a specific version of stack, using version ranges
-# require-stack-version: -any # Default
-# require-stack-version: ">=2.7"
-#
-# Override the architecture used by stack, especially useful on Windows
-# arch: i386
-# arch: x86_64
-#
-# Extra directories used by stack for building
+compiler-check: newer-minor
+
 # extra-include-dirs: [/path/to/dir]
 # extra-lib-dirs: [/path/to/dir]
-#
-# Allow a newer minor version of GHC than the snapshot specifies
-# compiler-check: newer-minor

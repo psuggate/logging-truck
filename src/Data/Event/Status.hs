@@ -169,8 +169,8 @@ deriving via Text instance ToSchema ServiceName
 deriving via Text instance ToParamSchema ServiceName
 deriving newtype  instance Hashable ServiceName
 
-instance IsString ServiceName where
-  fromString = ServiceName . toText
+instance IsString ServiceName where fromString = ServiceName . toText
+instance ToText   ServiceName where toText = getServiceName
 
 ------------------------------------------------------------------------------
 newtype Platform
@@ -182,8 +182,8 @@ deriving via Text instance ToSchema Platform
 deriving via Text instance ToParamSchema Platform
 deriving newtype  instance Hashable Platform
 
-instance IsString Platform where
-  fromString = Platform . toText
+instance IsString Platform where fromString = Platform . toText
+instance ToText   Platform where toText = getPlatform
 
 ------------------------------------------------------------------------------
 -- | Wrapped @UTCTime@ so that different parsers can be used for different
@@ -252,14 +252,9 @@ deriving via Text instance ToSchema EventStatus
 deriving via Text instance ToParamSchema EventStatus
 deriving newtype  instance Hashable EventStatus
 
-instance IsString EventStatus where
-  fromString = EventStatus . toText
-
-instance ToText EventStatus where
-  toText = getEventStatus
-
-instance ToBytes EventStatus where
-  bytes = bytes . getEventStatus
+instance IsString EventStatus where fromString = EventStatus . toText
+instance ToText   EventStatus where toText = getEventStatus
+instance ToBytes  EventStatus where bytes = bytes . getEventStatus
 
 ------------------------------------------------------------------------------
 resolved :: EventStatus
